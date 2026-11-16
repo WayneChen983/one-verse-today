@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>今日經句</title>
+  <meta name="description" content="每天一節經文，在你需要的時候與它相遇。">
+  <meta name="theme-color" content="#fbf7f0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#1b1713" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="今日經句">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="page">
+    <div class="wrap">
+      <div class="eyebrow">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.09 6.26L20 9.27l-4.5 3.64L17 19l-5-3.27L7 19l1.5-6.09L4 9.27l5.91-1.01L12 2z"/></svg>
+        <span id="eyebrow">今日經句</span>
+      </div>
+
+      <figure id="card" class="card">
+        <blockquote id="verse-text"></blockquote>
+        <figcaption id="verse-ref"></figcaption>
+      </figure>
+
+      <div class="actions">
+        <button class="icon-btn" id="btn-random" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+          換一節
+        </button>
+        <button class="icon-btn" id="btn-fav" type="button" aria-pressed="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+          <span id="fav-label">收藏</span>
+        </button>
+        <button class="icon-btn" id="btn-share" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></svg>
+          分享
+        </button>
+        <button class="icon-btn" id="btn-image" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.09-3.09a2 2 0 0 0-2.82 0L6 21"/></svg>
+          存圖片
+        </button>
+      </div>
+
+      <a id="back-today" class="text-link" href="#" hidden>回到今日經句</a>
+
+      <h2 class="section-title">依主題閱讀</h2>
+      <div class="chips" id="chips" role="toolbar" aria-label="主題"></div>
+      <ul class="list" id="list"></ul>
+
+      <p class="footer">經文引自《和合本》聖經</p>
+    </div>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="verses.js"></script>
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    const FAV_KEY = "bq:favs";
+
+    const store = {
+      get() {
+        try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; }
+      },
+      set(ids) {
+        try { localStorage.setItem(FAV_KEY, JSON.stringify(ids)); } catch {}
+      },
+    };
+
+    const today = verseForDate();
+    let current = today;
+    let filter = "all";
+
+    // ?v=12 可直接開啟某一節（分享頁的「開啟」會帶這個參數）
+    const fromUrl = verseById(new URLSearchParams(location.search).get("v"));
+    if (fromUrl) current = fromUrl;
+
+    function todayLabel() {
+      const d = new Date();
+      const w = "日一二三四五六"[d.getDay()];
+      return `今日經句 · ${d.getMonth() + 1}月${d.getDate()}日 週${w}`;
+    }
+
+    function showVerse(v, animate = true) {
+      current = v;
+      $("verse-text").textContent = v.text;
+      $("verse-ref").textContent = v.ref;
+      if (v.ex) {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = "節錄";
+        $("verse-ref").appendChild(tag);
+      }
+      const isToday = v.id === today.id;
+      $("eyebrow").textContent = isToday ? todayLabel() : themeName(v.theme);
+      $("back-today").hidden = isToday;
+
+      const fav = store.get().includes(v.id);
+      $("btn-fav").setAttribute("aria-pressed", String(fav));
+      $("fav-label").textContent = fav ? "已收藏" : "收藏";
+
+      if (animate) {
+        const card = $("card");
+        card.classList.remove("fade");
+        void card.offsetWidth;
+        card.classList.add("fade");
+      }
+    }
+
+    function toast(msg) {
+      const el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toast.t);
+      toast.t = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    // 主題篩選與列表
+    function renderChips() {
+      const items = [{ id: "all", name: "全部" }, ...THEMES, { id: "fav", name: "♡ 收藏" }];
+      $("chips").replaceChildren(
+        ...items.map((t) => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = "chip";
+          b.textContent = t.name;
+          b.setAttribute("aria-pressed", String(t.id === filter));
+          b.onclick = () => { filter = t.id; renderChips(); renderList(); };
+          return b;
+        })
+      );
+    }
+
+    function renderList() {
+      const favs = store.get();
+      const items =
+        filter === "all" ? VERSES :
+        filter === "fav" ? favs.map(verseById).filter(Boolean) :
+        VERSES.filter((v) => v.theme === filter);
+
+      if (!items.length) {
+        const li = document.createElement("li");
+        li.className = "empty";
+        li.textContent = "還沒有收藏。看到喜歡的經文，點 ♡ 收藏起來。";
+        $("list").replaceChildren(li);
+        return;
+      }
+      $("list").replaceChildren(
+        ...items.map((v) => {
+          const li = document.createElement("li");
+          const b = document.createElement("button");
+          b.type = "button";
+          const t = document.createElement("div");
+          t.className = "t";
+          t.textContent = v.text;
+          const r = document.createElement("div");
+          r.className = "r";
+          r.textContent = v.ref + (v.ex ? "（節錄）" : "");
+          b.append(t, r);
+          b.onclick = () => {
+            showVerse(v);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          };
+          li.append(b);
+          return li;
+        })
+      );
+    }
+
+    // 動作
+    $("btn-random").onclick = () => {
+      let v;
+      do { v = VERSES[Math.floor(Math.random() * VERSES.length)]; } while (v.id === current.id);
+      showVerse(v);
+    };
+
+    $("btn-fav").onclick = () => {
+      const favs = store.get();
+      const i = favs.indexOf(current.id);
+      if (i >= 0) favs.splice(i, 1); else favs.unshift(current.id);
+      store.set(favs);
+      showVerse(current, false);
+      if (filter === "fav") renderList();
+      toast(i >= 0 ? "已取消收藏" : "已收藏");
+    };
+
+    $("btn-share").onclick = async () => {
+      const url = new URL(`q.html?v=${current.id}`, location.href).href;
+      const text = `${current.text}\n——${current.ref}${current.ex ? "（節錄）" : ""}`;
+      if (navigator.share) {
+        try { await navigator.share({ title: APP_NAME, text, url }); } catch {}
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(`${text}\n${url}`);
+        toast("已複製經文與連結");
+      } catch {
+        prompt("複製這個連結：", url);
+      }
+    };
+
+    $("btn-image").onclick = async () => {
+      const canvas = await drawVerseImage(current);
+      const name = `${current.ref.replace(/\s+/g, "")}.png`;
+      canvas.toBlob(async (blob) => {
+        const file = new File([blob], name, { type: "image/png" });
+        // 手機上優先用系統分享（可直接存到相簿或貼到 IG）
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          try { await navigator.share({ files: [file] }); return; } catch (e) {
+            if (e.name === "AbortError") return;
+          }
+        }
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        toast("圖片已下載");
+      }, "image/png");
+    };
+
+    $("back-today").onclick = (e) => {
+      e.preventDefault();
+      showVerse(today);
+    };
+
+    // 經文圖卡（1080×1350，適合 IG 貼文）
+    async function drawVerseImage(v) {
+      const W = 1080, H = 1350, PAD = 120;
+      const serif = '"Noto Serif TC", "Songti TC", serif';
+      try {
+        await Promise.all([
+          document.fonts.load(`500 60px "Noto Serif TC"`, v.text),
+          document.fonts.load(`500 34px "Noto Serif TC"`, v.ref + "節錄"),
+        ]);
+      } catch {}
+
+      const c = document.createElement("canvas");
+      c.width = W; c.height = H;
+      const g = c.getContext("2d");
+
+      g.fillStyle = "#fbf7f0";
+      g.fillRect(0, 0, W, H);
+      // 內框
+      g.strokeStyle = "#f0e1cc";
+      g.lineWidth = 3;
+      roundRect(g, 60, 60, W - 120, H - 120, 48);
+      g.stroke();
+
+      // 斷行：中文逐字，標點不放行首
+      const size = v.text.length > 40 ? 54 : v.text.length > 24 ? 62 : 72;
+      const lh = size * 1.75;
+      g.font = `500 ${size}px ${serif}`;
+      const lines = wrap(g, v.text, W - PAD * 2);
+      const blockH = lines.length * lh;
+      let y = (H - blockH) / 2 - 40;
+
+      g.fillStyle = "#3b2e21";
+      g.textAlign = "center";
+      g.textBaseline = "middle";
+      lines.forEach((ln, i) => g.fillText(ln, W / 2, y + lh * i + lh / 2));
+
+      // 分隔線與出處
+      y += blockH + 56;
+      g.fillStyle = "#c58a3e";
+      g.fillRect(W / 2 - 28, y, 56, 3);
+      g.font = `500 34px ${serif}`;
+      g.fillStyle = "rgba(59,46,33,0.62)";
+      g.fillText(v.ref + (v.ex ? "（節錄）" : ""), W / 2, y + 64);
+
+      g.font = `500 26px ${serif}`;
+      g.fillStyle = "rgba(59,46,33,0.36)";
+      g.fillText(APP_NAME, W / 2, H - 120);
+      return c;
+    }
+
+    function wrap(g, text, maxW) {
+      const noStart = "，。；：、！？」』）—…";
+      const lines = [];
+      let line = "";
+      for (const ch of text) {
+        if (g.measureText(line + ch).width > maxW && line && !noStart.includes(ch)) {
+          lines.push(line);
+          line = ch;
+        } else {
+          line += ch;
+        }
+      }
+      if (line) lines.push(line);
+      return lines;
+    }
+
+    function roundRect(g, x, y, w, h, r) {
+      g.beginPath();
+      g.moveTo(x + r, y);
+      g.arcTo(x + w, y, x + w, y + h, r);
+      g.arcTo(x + w, y + h, x, y + h, r);
+      g.arcTo(x, y + h, x, y, r);
+      g.arcTo(x, y, x + w, y, r);
+      g.closePath();
+    }
+
+    showVerse(current, false);
+    renderChips();
+    renderList();
+
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
+  })();
+  </script>
+</body>
+</html>

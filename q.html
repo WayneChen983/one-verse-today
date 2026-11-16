@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script>if (/github\.io$/.test(location.hostname)) location.replace("https://verse.me.uk/q.html" + location.search + location.hash);</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>One Verse Today</title>
+  <meta name="description" content="A verse shared with you from One Verse Today (今日經句).">
+  <meta property="og:title" content="One Verse Today · 今日經句">
+  <meta property="og:description" content="A verse shared with you. 送給你的一節經文。">
+  <meta name="twitter:card" content="summary">
+  <meta name="theme-color" content="#FBF7F0">
+  <link rel="icon" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;600&family=Noto+Serif:wght@500;600&display=swap">
+  <style>
+    :root {
+      --bg: #FBF7F0; --card: #FFFDF9; --border: #E8D8C2; --accent: #8A5415;
+      --text: #352A20; --muted: #67594C; --faint: #76695D;
+      --sans: -apple-system, BlinkMacSystemFont, "PingFang TC", "Noto Sans TC", "Segoe UI", sans-serif;
+      --serif: "Noto Serif", "Noto Serif TC", "Songti TC", Georgia, serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg: #181512; --card: #211D19; --border: #5B5044; --accent: #E9B66C;
+        --text: #F5EDE1; --muted: #C6B9A8; --faint: #A99B89;
+      }
+    }
+    :root[data-theme="dark"] {
+      --bg: #181512; --card: #211D19; --border: #5B5044; --accent: #E9B66C;
+      --text: #F5EDE1; --muted: #C6B9A8; --faint: #A99B89;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
+    main { max-width: 36rem; margin: 0 auto; padding: max(40px, env(safe-area-inset-top)) 16px 56px; }
+    header { display: flex; justify-content: space-between; align-items: baseline; font-size: 13px; font-weight: 500; letter-spacing: .06em; color: var(--muted); min-height: 28px; }
+    hr { border: 0; border-top: 1px solid var(--border); margin: 8px 0 0; }
+    .frame { margin-top: 24px; padding: 44px 28px 32px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; }
+    blockquote { margin: 0; font-family: var(--serif); font-weight: 500; font-size: 24px; line-height: 1.5; color: var(--text); text-wrap: pretty; }
+    html[lang^="zh"] blockquote { font-size: 26px; line-height: 1.69; letter-spacing: .02em; }
+    .rule { width: 48px; height: 1px; background: var(--accent); margin: 20px 0 12px; }
+    cite { font-style: normal; font-family: var(--serif); font-size: 15px; color: var(--muted); letter-spacing: .04em; font-variant: small-caps; }
+    .tr { font-family: var(--sans); font-size: 12px; font-variant: normal; margin-left: 8px; letter-spacing: .02em; }
+    .cta { margin-top: 44px; }
+    .cta h2 { font-family: var(--serif); font-weight: 600; font-size: 20px; margin: 0; }
+    .cta p { color: var(--muted); font-size: 15px; line-height: 1.6; margin: 8px 0 20px; }
+    .stores { display: flex; flex-wrap: wrap; gap: 12px; }
+    .stores a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border: 1px solid var(--border); border-radius: 4px; color: var(--text); text-decoration: none; font-size: 15px; font-weight: 500; background: var(--card); }
+    .stores a.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+    .letter { text-align: center; margin-top: 28px; animation: rise .42s ease-out both; }
+    .letter .milo { width: 120px; height: 120px; object-fit: contain; display: block; margin: 0 auto -6px; }
+    .letter .eyebrow { font-size: 13px; letter-spacing: .06em; color: var(--muted); margin: 6px 0 0; }
+    .letter .for { font-family: var(--serif); font-size: 22px; font-weight: 600; margin: 8px 0 0; }
+    .letter .note { font-family: var(--serif); font-size: 18px; margin: 10px auto 0; max-width: 28em; color: var(--text); }
+    .letter .byline { font-size: 13px; color: var(--muted); margin: 4px 0 0; }
+    .today { font-size: 14px; color: var(--muted); margin: 18px 0 0; }
+    .return { font: inherit; font-size: 15px; font-weight: 500; margin-top: 14px; min-height: 44px; padding: 0 18px; border: 1px solid var(--border); border-radius: 4px; background: var(--card); color: var(--text); cursor: pointer; }
+    @keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+    @media (prefers-reduced-motion: reduce) { .letter { animation: none; } }
+    footer { margin-top: 56px; font-size: 12px; color: var(--faint); }
+    footer a { color: var(--faint); }
+  </style>
+</head>
+<body>
+  <main>
+    <header><span id="mark">ONE VERSE TODAY</span><span id="kind"></span></header>
+    <hr>
+    <section class="letter" id="letter" hidden>
+      <img src="milo.png" alt="" class="milo" width="120" height="120">
+      <p class="eyebrow" id="r-eyebrow"></p>
+      <p class="for" id="r-for" hidden></p>
+      <blockquote class="note" id="r-note" hidden></blockquote>
+      <p class="byline" id="r-byline" hidden></p>
+    </section>
+    <figure class="frame" id="frame" hidden>
+      <blockquote id="text"></blockquote>
+      <div class="rule"></div>
+      <figcaption><cite id="ref"></cite><span class="tr" id="tr"></span></figcaption>
+    </figure>
+    <p class="today" id="r-today" hidden></p>
+    <button type="button" class="return" id="r-return" hidden></button>
+    <section class="cta">
+      <h2 id="cta-title"></h2>
+      <p id="cta-body"></p>
+      <div class="stores">
+        <a id="ios" class="primary" href="https://apps.apple.com/app/id6834286590">App Store</a>
+        <a id="android" href="https://play.google.com/store/apps/details?id=tw.tw466376.biblequotes">Google Play</a>
+      </div>
+    </section>
+    <footer><a id="privacy" href="privacy.html"></a> · Scripture: KJV, WEB, CUV (public domain)</footer>
+  </main>
+  <script src="verses.data.js"></script>
+  <script src="i18n.data.js"></script>
+  <script>
+  (function () {
+    var params = new URLSearchParams(location.search);
+    var prefs = navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || "en"];
+    var zh = String(prefs[0] || "").toLowerCase().indexOf("zh") === 0;
+    var S = zh ? {
+      mark: "今日經句", kind: "送給你的一節經文", title: "每天一節經文",
+      body: "「今日經句」每天為你準備一節經文，全世界在同一天讀同一節。免費、無廣告、不追蹤。", privacy: "隱私權政策"
+    } : {
+      mark: "ONE VERSE TODAY", kind: "A VERSE FOR YOU", title: "One verse, every day",
+      body: "One Verse Today brings you a single Bible verse each day — the same verse for everyone, everywhere. Free, no ads, no tracking.", privacy: "Privacy"
+    };
+    document.documentElement.lang = zh ? "zh-Hant" : "en";
+    document.getElementById("mark").textContent = S.mark;
+    document.getElementById("kind").textContent = S.kind;
+    document.getElementById("cta-title").textContent = S.title;
+    document.getElementById("cta-body").textContent = S.body;
+    document.getElementById("privacy").textContent = S.privacy;
+    document.title = zh ? "今日經句" : "One Verse Today";
+
+    if (/android/i.test(navigator.userAgent)) {
+      document.getElementById("android").className = "primary";
+      document.getElementById("ios").className = "";
+      document.querySelector(".stores").prepend(document.getElementById("android"));
+    }
+
+    var data = window.VERSE_DATA || (typeof VERSE_DATA !== "undefined" ? VERSE_DATA : null);
+    var id = Number(params.get("v"));
+    var t = params.get("t");
+    var tr = data && data.translations.find(function (x) { return x.id === t; });
+    if (!tr && data) {
+      var pref = String(prefs[0] || "").toLowerCase();
+      var guess = pref.indexOf("zh") === 0 ? ((pref.indexOf("hans") > 0 || /-(cn|sg|my)$/.test(pref)) ? "cuvs" : "cuv")
+        : pref.indexOf("ko") === 0 ? "krv" : pref.indexOf("es") === 0 ? "rv1909" : pref.indexOf("de") === 0 ? "lut1912" : "kjv";
+      tr = data.translations.find(function (x) { return x.id === guess; });
+    }
+    var v = data && data.verses.find(function (x) { return x.id === id; });
+    if (!v || !tr) return;
+    var body = v.text[tr.id];
+    var lang = tr.lang;
+    var chinese = lang.indexOf("zh") === 0;
+    var EX = { "zh-Hant": "節錄", "zh-Hans": "节录", ko: "발췌", es: "extracto", de: "Auszug", en: "excerpt" };
+    document.documentElement.lang = lang;
+    var title = v.title && v.title[lang];
+    if (title) {
+      var h = document.createElement("p");
+      // 中文標題在第一個逗號處分行（避免最後一兩個字孤零零掉到下一行）
+      var shown = title;
+      if (chinese && Array.from(title).length > 8 && title.indexOf("，") > 0) shown = title.replace("，", "，\n");
+      h.textContent = shown;
+      h.style.cssText = "font-family:var(--serif);font-weight:600;font-size:22px;margin:0 0 14px;color:var(--text);white-space:pre-line;text-wrap:balance";
+      document.getElementById("text").before(h);
+    }
+    document.getElementById("text").textContent = body.text;
+    var ref = v.ref[lang] || v.ref.en;
+    document.getElementById("ref").textContent = ref + (body.ex ? (chinese ? "（" + EX[lang] + "）" : " (" + EX[lang] + ")") : "");
+    document.getElementById("tr").textContent = tr.short;
+    document.getElementById("frame").hidden = false;
+    document.title = (chinese ? "今日經句｜" : "One Verse Today — ") + ref;
+
+    // 收卡：稱呼與留言放在 # 後面（不會送到伺服器），只以純文字顯示
+    var R = typeof RECEIVE_I18N !== "undefined" ? RECEIVE_I18N : {};
+    var tr8 = function (k, vars) { var s = (R[k] && (R[k][lang] || R[k].en)) || ""; for (var n in (vars || {})) s = s.split("{" + n + "}").join(vars[n]); return s; };
+    var frag = new URLSearchParams(location.hash.slice(1));
+    var dec = function (b, max) {
+      if (!b) return "";
+      try {
+        var bin = atob(b.replace(/-/g, "+").replace(/_/g, "/"));
+        var bytes = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        var txt = new TextDecoder().decode(bytes).replace(/[\u0000-\u001F\u007F]/g, "").trim();
+        return Array.from(txt).slice(0, max).join("");
+      } catch (e) { return ""; }
+    };
+    var to = frag.get("pv") === "1" ? dec(frag.get("to"), 20) : "";
+    var note = frag.get("pv") === "1" ? dec(frag.get("note"), 40) : "";
+    if (to || note) {
+      document.getElementById("letter").hidden = false;
+      document.getElementById("r-eyebrow").textContent = tr8("receive.eyebrow");
+      if (to) { var f = document.getElementById("r-for"); f.textContent = tr8("receive.for", { name: to }); f.hidden = false; }
+      if (note) {
+        var q = document.getElementById("r-note"); q.textContent = chinese ? "「" + note + "」" : "“" + note + "”"; q.hidden = false;
+        var by = document.getElementById("r-byline"); by.textContent = tr8("receive.note.byline"); by.hidden = false;
+      }
+    }
+    var todayEl = document.getElementById("r-today"); todayEl.textContent = tr8("receive.today"); todayEl.hidden = !todayEl.textContent;
+    document.getElementById("cta-title").textContent = tr8("receive.app") || document.getElementById("cta-title").textContent;
+    var ret = document.getElementById("r-return");
+    ret.textContent = tr8("receive.return"); ret.hidden = !ret.textContent;
+    ret.onclick = function () {
+      // 回送：分享這張卡（不帶對方寫給你的稱呼與留言）
+      var clean = location.origin + location.pathname + "?v=" + v.id + "&t=" + tr.id;
+      if (navigator.share) { navigator.share({ title: document.title, url: clean }).catch(function () {}); }
+      else if (navigator.clipboard) { navigator.clipboard.writeText(clean).then(function () { ret.textContent = tr8("receive.web.done"); }); }
+    };
+  })();
+  </script>
+</body>
+</html>
